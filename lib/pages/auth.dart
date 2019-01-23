@@ -62,11 +62,13 @@ class _AuthPageState extends State<AuthPage> {
   void _submitForm() {
     print(_emailValue);
     print(_passwordValue);
-    Navigator.pushReplacementNamed(context, '/products');        
+    Navigator.pushReplacementNamed(context, '/products');
   }
 
   @override
   Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
@@ -78,22 +80,25 @@ class _AuthPageState extends State<AuthPage> {
         padding: EdgeInsets.all(10.0),
         child: Center(
           child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _buildEmailTextField(),
-                SizedBox(height: 10.0),
-                _buildPasswordTextField(),
-                _buildAcceptSwitch(),
-                SizedBox(height: 10.0),
-                RaisedButton(
-                  child: Text(
-                    'Login',
+            child: Container(
+              width: targetWidth,
+              child: Column(
+                children: <Widget>[
+                  _buildEmailTextField(),
+                  SizedBox(height: 10.0),
+                  _buildPasswordTextField(),
+                  _buildAcceptSwitch(),
+                  SizedBox(height: 10.0),
+                  RaisedButton(
+                    child: Text(
+                      'Login',
+                    ),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    onPressed: _submitForm,
                   ),
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  onPressed: _submitForm,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
