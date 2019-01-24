@@ -8,7 +8,7 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final Map<String, dynamic> _authData = {
+  final Map<String, dynamic> _formData = {
     'email': null,
     'password': null,
     'acceptTerms': false,
@@ -41,7 +41,7 @@ class _AuthPageState extends State<AuthPage> {
         }
       },
       onSaved: (String value) {
-        _authData['email'] = value;
+        _formData['email'] = value;
       },
     );
   }
@@ -57,17 +57,17 @@ class _AuthPageState extends State<AuthPage> {
         }
       },
       onSaved: (String value) {
-        _authData['password'] = value;
+        _formData['password'] = value;
       },
     );
   }
 
   Widget _buildAcceptSwitch() {
     return SwitchListTile(
-      value: _authData['acceptTerms'],
+      value: _formData['acceptTerms'],
       onChanged: (bool value) {
         setState(() {
-          _authData['acceptTerms'] = value;
+          _formData['acceptTerms'] = value;
         });
       },
       title: Text('Accept Terms'),
@@ -75,7 +75,7 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   void _submitForm() {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
     _formKey.currentState.save();
