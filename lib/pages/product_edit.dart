@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/helpers/ensure-visible.dart';
 import '../models/product.dart';
+import '../scoped-models/products.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
@@ -94,19 +96,19 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm() {
+  void _submitForm(Function addProduct, Function updateProduct) {
     if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState.save();
     if (widget.product == null) {
-      widget.addProduct(Product(
+      addProduct(Product(
           title: _formData['title'],
           description: _formData['description'],
           price: _formData['price'],
           image: _formData['image']));
     } else {
-      widget.updateProduct(
+      updateProduct(
           widget.productIndex,
           Product(
               title: _formData['title'],
@@ -116,6 +118,17 @@ class _ProductEditPageState extends State<ProductEditPage> {
     }
 
     Navigator.pushReplacementNamed(context, '/products');
+  }
+
+  Widget _buildSubmitButton() {
+    return ScopedModelDescendant<ProductsModel>(
+        builder: (BuildContext context, Widget child, ProductsModel model) {
+      return RaisedButton(
+        child: Text('Save'),
+        textColor: Colors.white,
+        onPressed: () => _submitForm(model.addProduct, model.updateProduct),
+      );
+    });
   }
 
   Widget _buildPageContent(BuildContext context) {
@@ -139,11 +152,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              RaisedButton(
-                child: Text('Save'),
-                textColor: Colors.white,
-                onPressed: _submitForm,
-              )
+              _buildSubmitButton(),
               // GestureDetector(
               //   onTap: _submitForm,
               //   child: Container(
