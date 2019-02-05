@@ -1,11 +1,12 @@
 import 'package:scoped_model/scoped_model.dart';
+
 import '../models/product.dart';
 import '../models/user.dart';
 
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
-  User _authenticatedUser;
   int _selProductIndex;
+  User _authenticatedUser;
 
   void addProduct(
       String title, String description, String image, double price) {
@@ -17,7 +18,6 @@ mixin ConnectedProductsModel on Model {
         userEmail: _authenticatedUser.email,
         userId: _authenticatedUser.id);
     _products.add(newProduct);
-    
     notifyListeners();
   }
 }
@@ -54,21 +54,18 @@ mixin ProductsModel on ConnectedProductsModel {
   void updateProduct(
       String title, String description, String image, double price) {
     final Product updatedProduct = Product(
-      title: title,
-      description: description,
-      image: image,
-      price: price,
-      userEmail: selectedProduct.userEmail,
-      userId: selectedProduct.userId
-    );
+        title: title,
+        description: description,
+        image: image,
+        price: price,
+        userEmail: selectedProduct.userEmail,
+        userId: selectedProduct.userId);
     _products[selectedProductIndex] = updatedProduct;
-    _selProductIndex = null;
     notifyListeners();
   }
 
   void deleteProduct() {
     _products.removeAt(selectedProductIndex);
-    _selProductIndex = null;
     notifyListeners();
   }
 
@@ -85,7 +82,6 @@ mixin ProductsModel on ConnectedProductsModel {
         isFavorite: newFavoriteStatus);
     _products[selectedProductIndex] = updatedProduct;
     notifyListeners();
-    _selProductIndex = null;
   }
 
   void selectProduct(int index) {
@@ -100,9 +96,8 @@ mixin ProductsModel on ConnectedProductsModel {
 }
 
 mixin UserModel on ConnectedProductsModel {
-  
-  void login(String email, String password) {
-    _authenticatedUser = User(id: 'fafsfsfs', email: email, password: password);
+    void login(String email, String password) {
+    _authenticatedUser = User(id: 'fdalsdfasf', email: email, password: password);
   }
 }
 
