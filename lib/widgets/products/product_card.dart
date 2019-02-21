@@ -39,7 +39,9 @@ class ProductCard extends StatelessWidget {
         ScopedModelDescendant<MainModel>(
           builder: (BuildContext context, Widget child, MainModel model) {
             return IconButton(
-              icon: Icon(model.allProducts[productIndex].isFavorite ? Icons.favorite : Icons.favorite_border),
+              icon: Icon(model.allProducts[productIndex].isFavorite
+                  ? Icons.favorite
+                  : Icons.favorite_border),
               color: Colors.red,
               onPressed: () {
                 model.selectProduct(productIndex);
@@ -57,7 +59,12 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+            image: NetworkImage(product.image),
+            height: 300.0,
+            fit: BoxFit.cover,
+            placeholder: AssetImage('assets/food.jpg'),
+          ),
           _buildTitlePriceRow(),
           AddressTag('Union Square, San Francisco'),
           Text(product.userEmail),
