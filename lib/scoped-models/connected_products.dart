@@ -8,11 +8,11 @@ import '../models/user.dart';
 
 mixin ConnectedProductsModel on Model {
   List<Product> _products = [];
-  int _selProductIndex;
+  String _selProductId;
   User _authenticatedUser;
   bool _isLoading = false;
 
-  Future<Null> addProduct(
+  Future<bool> addProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -29,6 +29,10 @@ mixin ConnectedProductsModel on Model {
         .post('https://flutter-products-8c263.firebaseio.com/products.json',
             body: json.encode(productData))
         .then((http.Response response) {
+          if (response.statusCode != 200 && response.statusCode != 200) {
+            _isLoading = false;
+            return false;
+          }
       _isLoading = false;
       final Map<String, dynamic> responseData = json.decode(response.body);
       print(responseData);
@@ -42,6 +46,7 @@ mixin ConnectedProductsModel on Model {
           userId: _authenticatedUser.id);
       _products.add(newProduct);
       notifyListeners();
+      return true;
     });
   }
 }
@@ -61,14 +66,22 @@ mixin ProductsModel on ConnectedProductsModel {
   }
 
   int get selectedProductIndex {
-    return _selProductIndex;
+    return _products.indexWhere((Product product) {
+      return product.id == _selProductId;
+    });
+  }
+
+  String get selectedProductId {
+    return _selProductId;
   }
 
   Product get selectedProduct {
-    if (selectedProductIndex == null) {
+    if (selectedProductId == null) {
       return null;
     }
-    return _products[selectedProductIndex];
+    return _products.firstWhere((Product product) {
+      return product.id == _selProductId;
+    });
   }
 
   bool get displayFavoritesOnly {
@@ -111,9 +124,11 @@ mixin ProductsModel on ConnectedProductsModel {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
-    _selProductIndex = null;
-    http.delete('https://flutter-products-8c263.firebaseio.com/products/${deletedProductId}.json')
-    .then((http.Response response) {
+    _selProductId = null;
+    http
+        .delete(
+            'https://flutter-products-8c263.firebaseio.com/products/${deletedProductId}.json')
+        .then((http.Response response) {
       _isLoading = false;
       notifyListeners();
     });
@@ -145,6 +160,7 @@ mixin ProductsModel on ConnectedProductsModel {
       _products = fetchedProductList;
       _isLoading = false;
       notifyListeners();
+      _selProductId = null;
     });
   }
 
@@ -152,6 +168,7 @@ mixin ProductsModel on ConnectedProductsModel {
     final bool isCurrentlyFavorite = selectedProduct.isFavorite;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updatedProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
@@ -163,8 +180,8 @@ mixin ProductsModel on ConnectedProductsModel {
     notifyListeners();
   }
 
-  void selectProduct(int index) {
-    _selProductIndex = index;
+  void selectProduct(String productId) {
+    _selProductId = productId;
     notifyListeners();
   }
 
